@@ -1,0 +1,64 @@
+<!-- TelkomselCounterApp/counters/templates/counters/dashboard.html -->
+
+<!DOCTYPE html> {# Tambahkan boilerplate HTML dasar jika tidak menggunakan base.html #}
+<html>
+<head>
+    <title>Dashboard Counter</title>
+    {# Opsi: Link ke CSS jika ada #}
+    {# {% load static %} #}
+    {# <link rel="stylesheet" href="{% static 'css/style.css' %}"> #}
+</head>
+<body>
+    <h1>Selamat Datang di Dashboard, {{ counter_data.nama_counter }}!</h1>
+    {# Mengakses data counter_data yang dikirim dari views #}
+
+    <p>Pemilik: {{ counter_data.nama_pemilik }}</p>
+    <p>Alamat: {{ counter_data.alamat }}</p>
+    <p>Nomor Telepon: {{ counter_data.nomor_telepon|default:"Belum ada" }}</p> {# Menggunakan filter default #}
+    <p>Bergabung Sejak: {{ counter_data.tanggal_bergabung|date:"d F Y" }}</p> {# Menggunakan filter date #}
+
+    <h2>Status Verifikasi:</h2>
+    {% if counter_data.status_verifikasi == 'Pending' %}
+        <p style="color: orange;">{{ counter_data.get_status_verifikasi_display }}</p> {# Menggunakan get_FOO_display() #}
+        <p>Data Anda sedang dalam proses verifikasi oleh admin.</p>
+    {% elif counter_data.status_verifikasi == 'Verified' %}
+        <p style="color: green;">{{ counter_data.get_status_verifikasi_display }}</p>
+        <p>Data counter Anda telah terverifikasi.</p>
+    {% else %} {# Rejected atau status lain #}
+        <p style="color: red;">{{ counter_data.get_status_verifikasi_display }}</p>
+        <p>Mohon periksa catatan verifikasi dan perbaiki data Anda.</p>
+        {% if counter_data.notes_verifikasi %}
+            <p>Catatan Admin: {{ counter_data.notes_verifikasi }}</p>
+        {% endif %}
+    {% endif %}
+
+    <h2>Saldo Anda:</h2>
+    <p>Rp {{ counter_data.saldo|floatformat:2 }}</p> {# Menampilkan saldo dengan 2 angka di belakang koma #}
+
+    <h2>Stok Produk Anda:</h2>
+    {% if stock_items %}
+        <ul>
+            {% for item in stock_items %} {# Melakukan loop pada daftar stock_items #}
+                <li>{{ item.product.nama_produk }}: {{ item.jumlah }} unit</li> {# Mengakses relasi Product #}
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Belum ada stok yang tercatat.</p>
+    {% endif %}
+
+    <h2>Riwayat 5 Permintaan Top-up Terakhir:</h2>
+     {% if topup_requests %}
+        <ul>
+            {% for req in topup_requests %}
+                <li>{{ req.tanggal_request|date:"d M H:i" }} - Jumlah: Rp {{ req.jumlah_diminta|floatformat:2 }} - Status: {{ req.get_status_display }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Belum ada riwayat permintaan top-up.</p>
+    {% endif %}
+
+    {# Link Logout menggunakan nama URL bawaan Django #}
+    <p><a href="{% url 'logout' %}">Logout</a></p>
+
+</body>
+</html>

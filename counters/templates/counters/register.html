@@ -1,0 +1,35 @@
+<!-- TelkomselCounterApp/counters/templates/counters/register.html -->
+
+<!DOCTYPE html> {# Tambahkan boilerplate HTML dasar jika tidak menggunakan base.html #}
+<html>
+<head>
+    <title>Pendaftaran Counter Baru</title>
+    {# Opsi: Link ke CSS jika ada #}
+    {# {% load static %} #}
+    {# <link rel="stylesheet" href="{% static 'css/style.css' %}"> #}
+</head>
+<body>
+    <h1>Daftar Sebagai Counter Baru</h1>
+
+    {# Tampilkan pesan dari messages framework #}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data"> {# WAJIB untuk file uploads #}
+        {% csrf_token %}
+
+        {# Tampilkan semua field form #}
+        {{ form.as_p }}
+
+        <button type="submit">Daftar</button>
+    </form>
+
+    <p>Sudah punya akun? <a href="{% url 'login' %}">Login di sini</a></p> {# Menggunakan nama URL login bawaan Django #}
+
+</body>
+</html>

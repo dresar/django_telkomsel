@@ -1,0 +1,46 @@
+<!-- TelkomselCounterApp/counters/templates/counters/register.html -->
+
+{% extends 'base.html' %} {# <-- Ini baris pertama #}
+{% load static %} {# <-- Load static setelah extends, sebelum digunakan #}
+
+{% block title %}Pendaftaran Counter Baru{% endblock %}
+
+{# Asumsi base.html memiliki block bernama 'head' di dalam tag <head> #}
+{# Jika base.html tidak punya block 'head', Anda harus edit base.html dulu #}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'style.css' %}"> {# <-- Link CSS di dalam block head #}
+    {# Anda bisa menambahkan CSS spesifik lain untuk halaman register di sini #}
+{% endblock %}
+
+{% block content %} {# <-- Konten utama dimulai di sini #}
+    <h1>Daftar Sebagai Counter Baru</h1>
+
+    {# Tampilkan pesan dari messages framework #}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data"> {# PENTING: enctype untuk file uploads #}
+        {% csrf_token %} {# Token keamanan wajib #}
+
+        {{ form.as_p }} {# Tampilkan semua field form dalam tag <p> #}
+
+        {# Anda bisa merender field satu per satu untuk kontrol layout yang lebih baik #}
+        {# Contoh: #}
+        {# <p> #}
+        {#     <label for="{{ form.username.id_for_label }}">Username:</label> #}
+        {#     {{ form.username }} #}
+        {#     {{ form.username.errors }} {# Tampilkan error spesifik field ini #}
+        {# </p> #}
+
+
+        <button type="submit">Daftar</button>
+    </form>
+
+    <p>Sudah punya akun? <a href="{% url 'login' %}">Login di sini</a></p>
+
+{% endblock %} {# <-- endblock content #}

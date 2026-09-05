@@ -1,0 +1,68 @@
+<!-- TelkomselCounterApp/counters/templates/counters/dashboard.html -->
+{# Gunakan nama folder proyek baru Anda jika berbeda #}
+
+{% extends 'base.html' %} {# <-- Ini baris pertama #}
+{% load static %} {# <-- Load static setelah extends, sebelum digunakan #}
+
+{% block title %}Dashboard Counter {{ counter_data.nama_counter }}{% endblock %}
+
+{# Asumsi base.html memiliki block bernama 'head' di dalam tag <head> #}
+{# Jika base.html tidak punya block 'head', Anda harus edit base.html dulu #}
+{% block head %}
+    {# Tempatkan link CSS spesifik halaman atau CSS utama di sini #}
+    <link rel="stylesheet" href="{% static 'style.css' %}"> {# <-- Pindahkan link CSS ke dalam block head #}
+{% endblock %}
+
+{% block content %} {# <-- Konten utama dimulai di sini #}
+    <h1>Selamat Datang di Dashboard, {{ counter_data.nama_counter }}!</h1>
+    {# Mengakses data counter_data yang dikirim dari views #}
+
+    <p>Pemilik: {{ counter_data.nama_pemilik }}</p>
+    <p>Alamat: {{ counter_data.alamat }}</p>
+    <p>Nomor Telepon: {{ counter_data.nomor_telepon|default:"Belum ada" }}</p>
+    <p>Bergabung Sejak: {{ counter_data.tanggal_bergabung|date:"d F Y" }}</p>
+
+    <h2>Status Verifikasi:</h2>
+    {% if counter_data.status_verifikasi == 'Pending' %}
+        <p style="color: orange;">{{ counter_data.get_status_verifikasi_display }}</p>
+        <p>Data Anda sedang dalam proses verifikasi oleh admin.</p>
+    {% elif counter_data.status_verifikasi == 'Verified' %}
+        <p style="color: green;">{{ counter_data.get_status_verifikasi_display }}</p>
+        <p>Data counter Anda telah terverifikasi.</p>
+    {% else %} {# Rejected atau status lain #}
+        <p style="color: red;">{{ counter_data.get_status_verifikasi_display }}</p>
+        <p>Mohon periksa catatan verifikasi dan perbaiki data Anda.</p>
+        {% if counter_data.notes_verifikasi %}
+            <p>Catatan Admin: {{ counter_data.notes_verifikasi }}</p>
+        {% endif %}
+    {% endif %}
+
+    <h2>Saldo Anda:</h2>
+    <p>Rp {{ counter_data.saldo|floatformat:2 }}</p>
+
+    <h2>Stok Produk Anda:</h2>
+    {% if stock_items %}
+        <ul>
+            {% for item in stock_items %}
+                <li>{{ item.product.nama_produk }}: {{ item.jumlah }} unit</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Belum ada stok yang tercatat.</p>
+    {% endif %}
+
+    <h2>Riwayat 5 Permintaan Top-up Terakhir:</h2>
+     {% if topup_requests %}
+        <ul>
+            {% for req in topup_requests %}
+                <li>{{ req.tanggal_request|date:"d M H:i" }} - Jumlah: Rp {{ req.jumlah_diminta|floatformat:2 }} - Status: {{ req.get_status_display }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Belum ada riwayat permintaan top-up.</p>
+    {% endif %}
+
+    {# Contoh link ke halaman lain (jika sudah dibuat) #}
+    <p><a href="{% url 'logout' %}">Logout</a></p>
+
+{% endblock %} {# <-- endblock content #}

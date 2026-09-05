@@ -1,0 +1,38 @@
+<!-- TelkomselCounterApp/templates/registration/login.html -->
+
+{% load static %} {# <-- Hapus komentar ini #}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    {# Link ke file CSS Anda #}
+    <link rel="stylesheet" href="{% static 'style.css' %}"> {# <-- Hapus komentar ini #}
+</head>
+<body>
+    <h1>Login</h1>
+
+    {# Tampilkan pesan error login bawaan Django (misal: username/password salah) #}
+    {% if form.errors %}
+        <p style="color: red;">Username atau password salah. Mohon coba lagi.</p>
+    {% endif %}
+
+    {# Tampilkan pesan dari messages framework (misal: pesan sukses dari pendaftaran) #}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+    <form method="post">
+        {% csrf_token %} {# Token keamanan wajib #}
+        {{ form.as_p }} {# Tampilkan form sebagai paragraph #}
+        <button type="submit">Login</button>
+    </form>
+
+    <p>Belum punya akun? <a href="{% url 'counters:register_counter' %}">Daftar di sini</a></p>
+
+</body>
+</html>
